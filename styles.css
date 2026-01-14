@@ -148,14 +148,26 @@ header {
     position: fixed;
     top: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(0);
+    /* Force GPU */
     z-index: 1000;
     display: flex;
     align-items: center;
-    transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    /* Specific transitions for smoothness */
+    transition: height 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        width 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        top 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        border-radius 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        background 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        border 1.2s cubic-bezier(0.19, 1, 0.22, 1),
+        box-shadow 1.2s cubic-bezier(0.19, 1, 0.22, 1);
     color: #ffffff;
     overflow: hidden;
     border-radius: 0;
+    will-change: height, width, top, border-radius;
+    /* Hint browser */
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
 }
 
 header.scrolled {
@@ -164,9 +176,7 @@ header.scrolled {
     top: 15px;
     border-radius: 60px;
     background: rgba(var(--color-header-bg-rgb, 0, 26, 51), 0.08);
-    /* High transparency "Crystal" */
     backdrop-filter: blur(25px) saturate(180%);
-    /* macOS Tahoe style vibrancy */
     -webkit-backdrop-filter: blur(25px) saturate(180%);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -182,15 +192,14 @@ header.scrolled {
     padding: 0 2rem;
     height: 100%;
     transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    will-change: transform, padding;
 }
 
 header:not(.scrolled) .nav-container {
     flex-direction: column;
     justify-content: center;
     gap: 2rem;
-    /* Reduced gap to bring text closer to logo but keep blue space above */
     padding-top: 10vh;
-    /* Pushes the whole group down slightly to show blue space at top */
 }
 
 /* Left Section: Brand */
@@ -199,6 +208,7 @@ header:not(.scrolled) .nav-container {
     align-items: center;
     gap: 1.5rem;
     transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: translateZ(0);
 }
 
 header:not(.scrolled) .header-left {
@@ -214,21 +224,21 @@ header:not(.scrolled) .header-left {
     background: transparent;
     padding: 0;
     box-shadow: 0 0 35px rgba(0, 255, 255, 0.7);
-    /* Diffuse aura without hard ring */
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    will-change: width, height, transform, box-shadow;
+    transform: translateZ(0);
+    /* Avoid subpixel jitter */
 }
 
 header:not(.scrolled) .circular-logo {
     width: 280px;
-    /* Even bigger impact */
     height: 280px;
     box-shadow: 0 0 60px rgba(0, 255, 255, 0.4);
-    transform: translateY(-40px);
-    /* Pushes logo up for more "blue authority" space above the whole group */
+    transform: translateY(-40px) translateZ(0);
 }
 
 .circular-logo img {
@@ -244,11 +254,12 @@ header:not(.scrolled) .circular-logo {
     flex-direction: column;
     text-transform: uppercase;
     transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 header:not(.scrolled) .brand-text {
-    transform: translateY(-20px);
-    /* Stays attached to the logo movement */
+    transform: translateY(-20px) translateZ(0);
 }
 
 .brand-name {
@@ -412,6 +423,13 @@ body.dark-mode .theme-toggle .fa-moon {
     align-items: center;
     position: relative;
     background-color: var(--color-hero-bg);
+    /* Hero Image with Overlay */
+    background-image: linear-gradient(to bottom, rgba(0, 26, 51, 0.8), rgba(0, 0, 0, 0.9)), url('assets/img/hero_background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* Parallax feel */
     overflow: hidden;
     color: #ffffff;
     padding-bottom: 8vh;
@@ -419,10 +437,7 @@ body.dark-mode .theme-toggle .fa-moon {
     text-align: center;
 }
 
-header.scrolled+.hero {
-    padding-top: 120px;
-    /* Resets to normal when header is small */
-}
+
 
 .hero-content {
     position: relative;
@@ -565,7 +580,6 @@ header.scrolled+.hero {
 
 .card h3 {
     font-size: 1.25rem;
-    color: #000000;
 }
 
 /* Footer Logo */
@@ -587,10 +601,31 @@ header.scrolled+.hero {
 /* Threats Neutralized */
 .threats {
     padding: var(--spacing-section) 0;
+    /* Parallax Curtain Effect */
     background-color: var(--color-bg);
+    background-image: url('assets/img/units_background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
     border-top: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
-    position: relative;
+    color: #ffffff;
+    /* Contrast text */
+}
+
+/* Ensure bright text on dark background for threats section */
+.threats h2,
+.threats p,
+.threats .stat-item h4,
+.threats .stat-item p {
+    color: #ffffff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Override dark mode specific color issues if needed */
+body.dark-mode .threats {
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Matrix-like faint background for threats - removed to show image better */
